@@ -101,6 +101,18 @@ function build_mips_instructions() {
         environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] - environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
+    instructions['lw'] = function (environment, args) {
+        args = args.replaceAll( ' ', '' );
+        args = args.split(',');
+        //~ we need to make sure the offset is a multiple of 4
+        let target_reg = args[0];
+        let slice_index = args[1].indexOf('(');
+        //~ needs to assert that the offset is positive? Why would if be negative? Isn't that against the rules
+        let offset = parseInt( args[1].slice( 0, slice_index ) );
+        let mem_reg = args[1].slice(slice_index).replace('(','').replace(')','');
+        let address = offset + environment.registers[mem_reg];
+        environment.registers[target_reg] = environment.memory[address];
+    }
 
 
     return instructions;
