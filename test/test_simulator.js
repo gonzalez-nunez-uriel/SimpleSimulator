@@ -48,6 +48,44 @@ describe("Single Line MIPS Parser", function() {
         });
     });
 
+    describe("Simulate Add with Immediate", function () {
+
+        it ("Adds two registers together w/ spaces", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 1;
+            simulator.execute(environment, 'addi $t0, $t1, 4');
+            expect(environment.registers['$t0']).to.equal(5);
+        });
+
+        it ("Adds two registers together wo/ spaces", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 1;
+            simulator.execute(environment, 'addi $t0,$t1,4');
+            expect(environment.registers['$t0']).to.equal(5);
+        });
+
+        it ("Adds two registers together mixed format 1", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 1;
+            simulator.execute(environment, 'addi $t0,$t1, 4');
+            expect(environment.registers['$t0']).to.equal(5);
+        });
+
+        it ("Adds two registers together mixed format 2", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 1;
+            simulator.execute(environment, 'addi $t0, $t1,4');
+            expect(environment.registers['$t0']).to.equal(5);
+        });
+
+        it ("Adds two registers together w/ spaces in front", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 1;
+            simulator.execute(environment, '    addi $t0,$t1,4');
+            expect(environment.registers['$t0']).to.equal(5);
+        });
+    });
+
     describe("Simulate Subtract", function() {
 
         it ("Subtracts two registers together w/ spaces", function() {

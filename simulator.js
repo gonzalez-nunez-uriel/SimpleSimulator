@@ -64,7 +64,7 @@ function handle_command( environment, command ) {
 
 function add_registers( regs, character, n ) {
     for ( let idx = 0; idx < n; idx++ )
-        regs[ `$${character}${idx}` ] = 0;
+        regs[ `$${ character }${ idx }` ] = 0;
 }
 
 function build_mips_registers() {
@@ -102,12 +102,17 @@ function build_mips_instructions() {
     instructions['add'] = function ( environment, args ) {
         args = args.replaceAll( ' ', '' ); //~ Aparently, this makes a new copy.
         args = args.split( ',' );
-        //~ What if the number of arguments is not right?
         environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] + environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
 
-    instructions['sub'] = function (environment, args) {
+    instructions['addi'] = function ( environment, args ) {
+        args = args.replaceAll( ' ', '' );
+        args = args.split( ',' );
+        environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] + parseInt( args[ 2 ] );
+    }
+
+    instructions['sub'] = function ( environment, args ) {
         args = args.replaceAll( ' ', '' );  
         args = args.split( ',' );
         //~ What if the number of arguments is not right?
