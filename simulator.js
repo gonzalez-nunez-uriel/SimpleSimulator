@@ -12,7 +12,8 @@ module.exports = {
         add_registers: add_registers,
         build_mips_registers: build_mips_registers,
         build_mips_instructions: build_mips_instructions,
-        build_memory: build_memory
+        build_memory: build_memory,
+        preprocess_args: preprocess_args
 
     }
 }
@@ -44,6 +45,18 @@ function remove_front_whitespaces( text_input ) {
         index = text_input.indexOf( ' ' );
     }
     return text_input;
+}
+
+function preprocess_args( args, expected_num_of_args ) {
+    args = args.replaceAll( ' ', '' );
+    args = args.split( ',' );
+    if( args.length == expected_num_of_args )
+        return args;
+    else {
+        //~ NEEDS TO BE IMPLEMENTED. Throw an exception or show an error msg?
+        // For interactive mode it would be great to just display a message, while for source code the execution must halt
+        return null; // temporary
+    }
 }
 
 function parse_mips( text_input ) {
@@ -100,29 +113,25 @@ function build_mips_instructions() {
     let instructions = {};
 
     instructions['add'] = function ( environment, args ) {
-        args = args.replaceAll( ' ', '' ); //~ Aparently, this makes a new copy.
-        args = args.split( ',' );
+        args = preprocess_args( args, 3 );
         environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] + environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
 
     instructions['addi'] = function ( environment, args ) {
-        args = args.replaceAll( ' ', '' );
-        args = args.split( ',' );
+        args = preprocess_args( args, 3 );
         environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] + parseInt( args[ 2 ] );
     }
 
     instructions['sub'] = function ( environment, args ) {
-        args = args.replaceAll( ' ', '' );  
-        args = args.split( ',' );
+        args = preprocess_args( args, 3 );
         //~ What if the number of arguments is not right?
         environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] - environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
 
     instructions['lw'] = function ( environment, args ) {
-        args = args.replaceAll( ' ', '' );
-        args = args.split( ',' );
+        args = preprocess_args( args, 2 );
         //~ we need to make sure the offset is a multiple of 4
         let target_reg = args[ 0 ];
         let slice_index = args[ 1 ].indexOf( '(' );
@@ -134,8 +143,7 @@ function build_mips_instructions() {
     }
 
     instructions['sw'] = function ( environment, args ) {
-        args = args.replaceAll( ' ', '' );
-        args = args.split( ',' );
+        args = preprocess_args( args, 2 );
         //~ we need to make sure the offset is a multiple of 4
         let source_reg = args[ 0 ];
         let slice_index = args[ 1 ].indexOf( '(' );
