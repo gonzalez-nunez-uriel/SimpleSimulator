@@ -115,4 +115,30 @@ describe("Single Line MIPS Parser", function() {
             expect(environment.registers['$t0']).to.equal(5);
         });
     });
+
+    describe("Store from memory to register", function() {
+        it ("Loads with a zero offset.", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 4;
+            environment.registers['$t0'] = 12;
+            simulator.execute(environment, 'sw $t0,0($t1)')
+            expect(environment.memory[4]).to.equal(12);
+        });
+
+        it ("Loads with a zero register and an offset.", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 0;
+            environment.registers['$t0'] = 5;
+            simulator.execute(environment, 'sw $t0,16($t1)')
+            expect(environment.memory[16]).to.equal(5);
+        });
+
+        it ("Loads with a register value & offset.", function() {
+            let environment = simulator.factory('mips');
+            environment.registers['$t1'] = 12;
+            environment.registers['$t0'] = 21;
+            simulator.execute(environment, 'sw $t0,8($t1)')
+            expect(environment.memory[20]).to.equal(21);
+        });
+    });
 });
