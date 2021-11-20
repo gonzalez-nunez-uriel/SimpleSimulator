@@ -11,14 +11,15 @@ function factory(cpu) {
         return {
             parser: parse_mips,
             registers: build_mips_registers(),
-            instructions: build_mips_instructions()
+            instructions: build_mips_instructions(),
+            memory: build_memory()
       }
   }
 }
 
 function execute(environment, text_input) {
     let command = environment.parser(text_input);
-    handle_command(environment.registers, environment.instructions, command);
+    handle_command(environment, command);
 }
 
 //~ optimize latter
@@ -43,10 +44,10 @@ function parse_mips(text_input) {
     return command;
 }
 
-function handle_command(registers, instructions, command) {
-    let opt = instructions[command.opt];
+function handle_command(environment, command) {
+    let opt = environment.instructions[command.opt];
     //~ what if opt  is null?
-    opt(registers, command.args);
+    opt(environment, command.args);
 }
 
 function add_registers(regs, character, n) {
@@ -85,22 +86,35 @@ function build_mips_registers() {
 
 function build_mips_instructions() {
     let instructions = {};
-    instructions['add'] = function (registers, args) {
-        args = args.replaceAll( ' ', '' );  
+    instructions['add'] = function (environment, args) {
+        args = args.replaceAll( ' ', '' ); //~ Aparently, this makes a new copy.
         args = args.split(',');
         //~ What if the number of arguments is not right?
-        registers[ args[ 0 ] ] = registers[ args[ 1 ] ] + registers[ args[ 2 ] ]
+        environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] + environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
 
-    instructions['sub'] = function (registers, args) {
+    instructions['sub'] = function (environment, args) {
         args = args.replaceAll( ' ', '' );  
         args = args.split(',');
         //~ What if the number of arguments is not right?
-        registers[ args[ 0 ] ] = registers[ args[ 1 ] ] - registers[ args[ 2 ] ]
+        environment.registers[ args[ 0 ] ] = environment.registers[ args[ 1 ] ] - environment.registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
 
 
     return instructions;
+}
+
+function build_memory() {
+    let memory = {};
+    //~ Might not be the best location. Just temporary.
+    let size = 2**10;
+
+    // size must be incremented by 4 to simualte memory alignment
+    for( let x = 0; x < size; x += 4) {
+        memory[x] = 0;
+    }
+
+    return memory;
 }
