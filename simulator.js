@@ -121,10 +121,10 @@ function build_mips_instructions() {
         //~ we need to make sure the offset is a multiple of 4
         let target_reg = args[ 0 ];
         let slice_index = args[ 1 ].indexOf( '(' );
-        //~ needs to assert that the offset is positive? Why would if be negative? Isn't that against the rules
+        //~ needs to assert that the offset is positive? Why would if be negative? Isn't that against the rules?
         let offset = parseInt( args[ 1 ].slice( 0, slice_index ) );
-        let mem_reg = args[ 1 ].slice( slice_index ).replace( '(', '' ).replace( ')', '' );
-        let address = offset + environment.registers[ mem_reg ];
+        let address_reg = args[ 1 ].slice( slice_index ).replace( '(', '' ).replace( ')', '' );
+        let address = offset + environment.registers[ address_reg ];
         environment.registers[ target_reg ] = environment.memory[ address ];
     }
 
@@ -132,13 +132,13 @@ function build_mips_instructions() {
         args = args.replaceAll( ' ', '' );
         args = args.split( ',' );
         //~ we need to make sure the offset is a multiple of 4
-        let target_reg = args[ 0 ];
+        let source_reg = args[ 0 ];
         let slice_index = args[ 1 ].indexOf( '(' );
         //~ needs to assert that the offset is positive? Why would if be negative? Isn't that against the rules
         let offset = parseInt( args[ 1 ].slice( 0, slice_index ) );
-        let mem_reg = args[ 1 ].slice( slice_index ).replace( '(', '' ).replace( ')', '' );
-        let address = offset + environment.registers[ mem_reg ];
-        environment.memory[ address ] = environment.registers[ target_reg ];
+        let address_reg = args[ 1 ].slice( slice_index ).replace( '(', '' ).replace( ')', '' );
+        let address = offset + environment.registers[ address_reg ];
+        environment.memory[ address ] = environment.registers[ source_reg ];
     }
 
     return instructions;
