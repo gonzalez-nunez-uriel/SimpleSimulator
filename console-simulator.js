@@ -13,14 +13,26 @@ rl.on("close", function() {
 });
 
 // simulation configuration
-// needs input validation
-/*
+//~ needs input validation
+//~ how does this not break the stack? I think it does, right? This shit can only handle k inputs
 var recursiveAsyncConfig = function (){
-  rl.question(`Select CPU from ${simulator.supported_cpus}:`, (text_input) => {
+    let config_msg = 'Select CPU from ';
+    //~ There is probably a better way to do this
+    simulator.supported_cpus.forEach(cpu_choice => config_msg += cpu_choice + ' ');
     
-  });
-};*/
+    rl.question(config_msg, (text_input) => {
+        if( simulator.supported_cpus.includes(text_input) ) {
+            console.log(`CPU selected: ${text_input}`);
+            console.log('Simuation Start')
+            recursiveAsyncReadLine();
+        } else {
+            console.log('Sorry, input not recognized');
+            recursiveAsyncConfig();
+        }
+    });
+};
 
+recursiveAsyncConfig();
 
 //~ So how does this shit not break the stack?
 var recursiveAsyncReadLine = function (environment) {
@@ -31,5 +43,3 @@ var recursiveAsyncReadLine = function (environment) {
         recursiveAsyncReadLine();
     });
 };
-
-recursiveAsyncReadLine();

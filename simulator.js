@@ -1,6 +1,6 @@
 module.exports = {
     test_msg: "Import successful",
-    supported_cpus: 'mips',
+    supported_cpus: ['mips'],
     factory: factory,
     execute: execute
 }
