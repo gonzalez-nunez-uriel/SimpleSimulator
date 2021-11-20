@@ -8,8 +8,8 @@ const rl = readline.createInterface({
 });
 
 rl.on("close", function() {
-  console.log("\nSimulation complete.");
-  process.exit(0);
+    console.log("\nSimulation complete.");
+    process.exit(0);
 });
 
 // simulation configuration
@@ -24,12 +24,12 @@ var recursiveAsyncConfig = function (){
 
 // So how does this shit not break the stack?
 var recursiveAsyncReadLine = function (environment) {
-  rl.question('>> ', function (text_input) {
-    if(text_input == "exit" || text_input == "quit")
-      return rl.close();
-    console.log(simulator.parse(text_input)); //simulator(text_input);
-    recursiveAsyncReadLine();
-  });
+    rl.question('>> ', function (text_input) {
+        if(text_input == "exit" || text_input == "quit")
+            return rl.close();
+        console.log(simulator.parse(text_input)); //simulator(text_input);
+        recursiveAsyncReadLine();
+    });
 };
 
 recursiveAsyncReadLine();

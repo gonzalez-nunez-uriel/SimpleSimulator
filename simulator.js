@@ -1,19 +1,19 @@
 module.exports = {
-
-  test_msg: "Import successful",
-  supported_cpus: 'mips',
-  factory: factory,
-  execute: execute
+    test_msg: "Import successful",
+    supported_cpus: 'mips',
+    factory: factory,
+    execute: execute
 }
 
 function factory(cpu) {
     if (cpu == 'mips') {
+    // this returns the environment
         return {
             parser: parse_mips,
             registers: build_mips_registers(),
             instructions: build_mips_instructions()
-        }
-    }
+      }
+  }
 }
 
 function execute(environment, text_input) {
@@ -23,30 +23,30 @@ function execute(environment, text_input) {
 
 //~ optimize latter
 function remove_front_whitespaces(text_input) {
-  let index = text_input.indexOf(' ');
-  while(true){
-    if (index != 0)
-      break;
-    text_input = text_input.slice(1);
-    index = text_input.indexOf(' ');
-  }
-  return text_input;
+    let index = text_input.indexOf(' ');
+    while(true){
+        if (index != 0)
+            break;
+        text_input = text_input.slice(1);
+        index = text_input.indexOf(' ');
+    }
+    return text_input;
 }
 
 function parse_mips(text_input) {
     text_input = remove_front_whitespaces(text_input);
     let index = text_input.indexOf(' ');
     let command =  {
-      opt: text_input.slice( 0, index ), 
-      args: text_input.slice( index + 1 )
+        opt: text_input.slice( 0, index ), 
+        args: text_input.slice( index + 1 )
     }
     return command;
 }
 
 function handle_command(registers, instructions, command) {
-  let opt = instructions[command.opt];
-  // what if opt  is null?
-  opt(registers, command.args);
+    let opt = instructions[command.opt];
+    // what if opt  is null?
+    opt(registers, command.args);
 }
 
 function add_registers(regs, character, n) {
@@ -84,14 +84,14 @@ function build_mips_registers() {
 }
 
 function build_mips_instructions() {
-  let instructions = {};
-  instructions['add'] = function (registers, args) {
+    let instructions = {};
+    instructions['add'] = function (registers, args) {
     
-    args = args.replaceAll( ' ', '' );  
-    args = args.split(',');
-    //What if the number of arguments is not right?
-    registers[ args[ 0 ] ] = registers[ args[ 1 ] ] + registers[ args[ 2 ] ]
-    // a quick debug. Written before test framework was set up
-  }
-  return instructions;
+        args = args.replaceAll( ' ', '' );  
+        args = args.split(',');
+        //What if the number of arguments is not right?
+        registers[ args[ 0 ] ] = registers[ args[ 1 ] ] + registers[ args[ 2 ] ]
+        // a quick debug. Written before test framework was set up
+    }
+    return instructions;
 }
