@@ -47,4 +47,49 @@ describe("Single Line MIPS Parser", function() {
             expect(environment.registers['$t0']).to.equal(3);
         });
     });
+
+    describe("Simulate Subtract", function() {
+
+        it ("Subtracts two registers together w/ spaces", function() {
+            environment = simulator.factory('mips');
+            environment.registers['$t1'] = 2;
+            environment.registers['$t2'] = 1;
+            simulator.execute(environment, 'sub $t0, $t1, $t2');
+            expect(environment.registers['$t0']).to.equal(1);
+        });
+
+        it ("Subtracts two registers together wo/ spaces", function() {
+            environment = simulator.factory('mips');
+            environment.registers['$t1'] = 2;
+            environment.registers['$t2'] = 1;
+            simulator.execute(environment, 'sub $t0,$t1,$t2');
+            expect(environment.registers['$t0']).to.equal(1);
+        });
+
+        it ("Subtracts two registers together w/ mixed format 1", function() {
+            environment = simulator.factory('mips');
+            environment.registers['$t1'] = 2;
+            environment.registers['$t2'] = 1;
+            simulator.execute(environment, 'sub $t0, $t1,$t2');
+            expect(environment.registers['$t0']).to.equal(1);
+        });
+
+        it ("Subtracts two registers together w/ mixed format 2", function() {
+            environment = simulator.factory('mips');
+            environment.registers['$t1'] = 2;
+            environment.registers['$t2'] = 1;
+            simulator.execute(environment, 'sub $t0,$t1, $t2');
+            expect(environment.registers['$t0']).to.equal(1);
+        });
+
+        it ("Subtracts two registers together w/ spaces at the front", function() {
+            environment = simulator.factory('mips');
+            environment.registers['$t1'] = 2;
+            environment.registers['$t2'] = 1;
+            simulator.execute(environment, '   sub $t0,$t1,$t2');
+            expect(environment.registers['$t0']).to.equal(1);
+        });
+
+        
+    });
 });

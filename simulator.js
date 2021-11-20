@@ -92,5 +92,15 @@ function build_mips_instructions() {
         registers[ args[ 0 ] ] = registers[ args[ 1 ] ] + registers[ args[ 2 ] ]
         //~ a quick debug. Written before test framework was set up
     }
+
+    instructions['sub'] = function (registers, args) {
+        args = args.replaceAll( ' ', '' );  
+        args = args.split(',');
+        //~ What if the number of arguments is not right?
+        registers[ args[ 0 ] ] = registers[ args[ 1 ] ] - registers[ args[ 2 ] ]
+        //~ a quick debug. Written before test framework was set up
+    }
+
+
     return instructions;
 }
