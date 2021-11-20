@@ -7,7 +7,7 @@ module.exports = {
 
 function factory(cpu) {
     if (cpu == 'mips') {
-    // this returns the environment
+        // this returns the environment
         return {
             parser: parse_mips,
             registers: build_mips_registers(),
@@ -45,7 +45,7 @@ function parse_mips(text_input) {
 
 function handle_command(registers, instructions, command) {
     let opt = instructions[command.opt];
-    // what if opt  is null?
+    //~ what if opt  is null?
     opt(registers, command.args);
 }
 
@@ -86,12 +86,11 @@ function build_mips_registers() {
 function build_mips_instructions() {
     let instructions = {};
     instructions['add'] = function (registers, args) {
-    
         args = args.replaceAll( ' ', '' );  
         args = args.split(',');
-        //What if the number of arguments is not right?
+        //~ What if the number of arguments is not right?
         registers[ args[ 0 ] ] = registers[ args[ 1 ] ] + registers[ args[ 2 ] ]
-        // a quick debug. Written before test framework was set up
+        //~ a quick debug. Written before test framework was set up
     }
     return instructions;
 }

@@ -22,7 +22,7 @@ var recursiveAsyncConfig = function (){
 };*/
 
 
-// So how does this shit not break the stack?
+//~ So how does this shit not break the stack?
 var recursiveAsyncReadLine = function (environment) {
     rl.question('>> ', function (text_input) {
         if(text_input == "exit" || text_input == "quit")
