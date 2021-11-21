@@ -30,7 +30,9 @@ console_commands = {
     show_all: show_all_memory,
     sha: show_all_memory,
     step: step,
-    s: step
+    s: step,
+    load_file: load_file,
+    lf: load_file
 }
 
 //~populates set obj
@@ -147,6 +149,10 @@ function put_instruction_in_mem( environment, text_input ) {
         let instruction = text_input.slice( between_address_instruction + 1);
         environment.memory[ address ] = instruction;
     } 
+}
+
+function load_file( environment, text_input) {
+
 }
 
 function step( environment, text_input ) {
