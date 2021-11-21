@@ -5,6 +5,7 @@ module.exports = {
     supported_instructions: null,
     factory: factory,
     execute: execute,
+    step:step,
     // To make functions visible for simple repl manipulation. To make it easy to find and debug.
     // dg stand for debug. Short, so there is no need to type too much.
     dg: {
@@ -76,10 +77,22 @@ function preprocess_args( args, expected_num_of_args ) {
 function parse_mips( text_input ) {
     text_input = remove_front_whitespaces( text_input );
     let index = text_input.indexOf( ' ' );
-    let command =  {
-        opt: text_input.slice( 0, index ), 
-        args: text_input.slice( index + 1 )
+    let command = null;
+    // guard. In case the instruction takes no arguments.
+    // in this case the instruction should not attempt to access the args var
+    if( index == -1 ) {
+        command = {
+            opt: text_input,
+            args: null
+        }
     }
+    else {
+        command =  {
+            opt: text_input.slice( 0, index ), 
+            args: text_input.slice( index + 1 )
+        }
+    }
+    
     return command;
 }
 
@@ -128,8 +141,12 @@ function build_mips_instructions() {
 
     //~ still has the issue that each new instruction needs to be manually added here.
     let mips_instructions = new Set();
-    ['add','addi','sub','lw','sw'].forEach( e => mips_instructions.add(e) );
+    ['halt','add','addi','sub','lw','sw'].forEach( e => mips_instructions.add(e) );
     module.exports.supported_instructions = mips_instructions;
+
+    instructions['halt'] = function ( environment, args ){
+        console.log('HALT'); //~ This is temporary. There needs to be a way for the sim to signal the end of the simulation
+    }
 
     instructions['add'] = function ( environment, args ) {
         args = preprocess_args( args, 3 );

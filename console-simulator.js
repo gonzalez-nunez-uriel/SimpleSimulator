@@ -26,9 +26,11 @@ console_commands = {
     put_instruction_in_mem: put_instruction_in_mem,
     pim: put_instruction_in_mem,
     show: show,
-    s: show,
+    sh: show,
     show_all: show_all_memory,
-    sa: show_all_memory
+    sha: show_all_memory,
+    step: step,
+    s: step
 }
 
 //~populates set obj
@@ -65,6 +67,7 @@ var recursiveAsyncReadLine = function ( environment ) {
         if( exit_commands.has( text_input ) )
             return rl.close();
         else {
+            
             if( recognized_console_commands.has( parse_console_command( text_input ) ) )
                 handle_console_command( environment, text_input );
             else {
@@ -144,6 +147,10 @@ function put_instruction_in_mem( environment, text_input ) {
         let instruction = text_input.slice( between_address_instruction + 1);
         environment.memory[ address ] = instruction;
     } 
+}
+
+function step( environment, text_input ) {
+    simulator.step( environment );
 }
 
 recursiveAsyncConfig();
