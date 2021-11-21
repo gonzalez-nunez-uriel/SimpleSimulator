@@ -26,7 +26,9 @@ console_commands = {
     put_instruction_in_mem: put_instruction_in_mem,
     pim: put_instruction_in_mem,
     show: show,
-    show_all: show_all_memory
+    s: show,
+    show_all: show_all_memory,
+    sa: show_all_memory
 }
 
 //~populates set obj
@@ -83,7 +85,6 @@ var recursiveAsyncReadLine = function ( environment ) {
 
 function handle_console_command( environment, text_input ) {
     let console_command = parse_console_command( text_input );
-    
     console_commands[ console_command ]( environment, text_input );
     recursiveAsyncReadLine( environment );
 }
