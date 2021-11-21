@@ -1,6 +1,6 @@
 module.exports = {
     test_msg: "Import successful",
-    supported_cpus: ['mips'],
+    supported_cpus: null,
     //~ Is it efficient to search a list?
     supported_instructions: null,
     factory: factory,
@@ -19,6 +19,10 @@ module.exports = {
 
     }
 }
+
+supported_cpus = new Set();
+['mips'].forEach( e => supported_cpus.add(e) );
+module.exports.supported_cpus = supported_cpus;
 
 function factory( cpu ) {
     if ( cpu == 'mips' ) {
