@@ -41,6 +41,14 @@ function execute( environment, text_input ) {
     handle_command( environment, command );
 }
 
+// executes the next instruction pointed by the program counter
+// this fn is to be used only if instructions have been loaded into memory
+function step( environment ){
+    let instruction = environment.memory[ environment.registers[ '$pc' ] ];
+    execute( environment, instruction );
+    environment.registers[ '$pc' ] = environment.registers[ '$pc' ] + 4;
+}
+
 //~ optimize latter
 function remove_front_whitespaces( text_input ) {
     let index = text_input.indexOf( ' ' );
