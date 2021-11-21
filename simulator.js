@@ -1,6 +1,8 @@
 module.exports = {
     test_msg: "Import successful",
     supported_cpus: ['mips'],
+    //~ Is it efficient to search a list?
+    supported_instructions: null,
     factory: factory,
     execute: execute,
     // To make functions visible for simple repl manipulation. To make it easy to find and debug.
@@ -111,6 +113,11 @@ function build_mips_registers() {
 
 function build_mips_instructions() {
     let instructions = {};
+
+    //~ still has the issue that each new instruction needs to be manually added here.
+    let mips_instructions = new Set();
+    ['add','addi','sub','lw','sw'].forEach( e => mips_instructions.add(e) );
+    module.exports.supported_instructions = mips_instructions;
 
     instructions['add'] = function ( environment, args ) {
         args = preprocess_args( args, 3 );
