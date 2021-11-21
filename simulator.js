@@ -20,6 +20,15 @@ module.exports = {
     }
 }
 
+
+
+mips_instructions = new Set();
+mips_instructions.add('set');
+
+console.log('>>');
+console.log(mips_instructions);
+console.log('>>');
+
 function factory( cpu ) {
     if ( cpu == 'mips' ) {
         // this returns the environment
