@@ -21,7 +21,7 @@ module.exports = {
 }
 
 supported_cpus = new Set();
-['mips'].forEach( e => supported_cpus.add(e) );
+['mips'].forEach( e => supported_cpus.add( e ) );
 module.exports.supported_cpus = supported_cpus;
 
 function factory( cpu ) {
