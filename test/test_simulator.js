@@ -189,7 +189,7 @@ describe("Instructions Stored in Memory and Executed One by One", function() {
         environment.memory[8] = 'lw $t0,0($zero)'; // $t0 <- 10
         environment.memory[12] = 'lw $t1,4($zero)'; // $t1 <- 12
         environment.memory[16] = 'add $t2,$t1,$t0'; // $t2 <- 22
-        environment.memory[20] = 'addi $t3,$zero,32'; // $t3 <- 32
+        environment.memory[20] = 'addi $t3,$zero,32'; // $t3 <- 32 // this is essentially setting the stack pointer
         environment.memory[24] = 'sw $t2,0($t3)'; // MEM[32] <- 22
         environment.memory[28] = 'halt';
         environment.registers[ '$pc' ] = 8;
@@ -201,8 +201,8 @@ describe("Instructions Stored in Memory and Executed One by One", function() {
         simulator.step( environment ); // inst @ 28 executed
         expect( environment.memory[ 32 ] ).to.equal( 22 );
     });
-    it( "Simple load, add, subtract, and store", function (){
-        let environment = simulator.factory('mips');
+    it( "Simple load, add, subtract, and store", function() {
+        let environment = simulator.factory( 'mips' );
         environment.memory[0]  = 1;
         environment.memory[4]  = 2;
         environment.memory[8]  = 3;
@@ -225,6 +225,6 @@ describe("Instructions Stored in Memory and Executed One by One", function() {
         simulator.step( environment ); // inst @ 36 executed
         simulator.step( environment ); // inst @ 40 executed
         simulator.step( environment ); // inst @ 44 executed
-        expect( environment.registers[ '$t2' ] ).to.equal(6);
+        expect( environment.registers[ '$t2' ] ).to.equal( 6 );
     });
 });
