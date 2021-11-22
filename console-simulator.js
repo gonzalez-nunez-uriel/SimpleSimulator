@@ -1,6 +1,6 @@
 const simulator = require('./simulator'); console.log(simulator.test_msg);
 const readline = require("readline");
-const { env } = require('yargs');
+const fs = require('fs');
 
 // reader configuration
 const rl = readline.createInterface({
@@ -151,8 +151,12 @@ function put_instruction_in_mem( environment, text_input ) {
     } 
 }
 
-function load_file( environment, text_input) {
-
+function load_file( environment, text_input ) {
+    let slice_index = text_input.indexOf( ' ' );
+    let file_path = text_input.slice( slice_index + 1 );
+    let source = fs.readFileSync(file_path, {encoding: 'utf8', flag:'r'});
+    //console.log(source.split('\n'));//~print
+    simulator.load_source_into_memory( environment, source );
 }
 
 function step( environment, text_input ) {

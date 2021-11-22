@@ -6,6 +6,7 @@ module.exports = {
     factory: factory,
     execute: execute,
     step:step,
+    load_source_into_memory: load_source_into_memory,
     // To make functions visible for simple repl manipulation. To make it easy to find and debug.
     // dg stand for debug. Short, so there is no need to type too much.
     dg: {
@@ -115,6 +116,7 @@ function build_mips_registers() {
     registers['$sp'] = 0;
     registers['$fp'] = 0;
     registers['$ra'] = 0;
+    registers['$pc'] = 0;
 
 
     // regular registers
@@ -193,15 +195,48 @@ function build_mips_instructions() {
     return instructions;
 }
 
+//~ Might not be the best location. Just temporary.
+const MEM_SIZE = 2**10;
 function build_memory() {
     let memory = {};
-    //~ Might not be the best location. Just temporary.
-    let size = 2**10;
-
+    
     // size must be incremented by 4 to simualte memory alignment
-    for( let x = 0; x < size; x += 4 ) {
+    for( let x = 0; x < MEM_SIZE; x += 4 ) {
         memory[x] = 0;
     }
 
     return memory;
+}
+
+// provided the contents of a file as a string, it puts all that string into memory
+//~Simple version that does not understand .data, .word, .text, or any other sp labels and empty lines
+function load_source_into_memory( environment, text_input ) {
+    text_input = text_input.split( '\n' );
+    
+    let address = 0;
+    let data_flag = false; //if in .text area then false; if in .data area then true
+    text_input.forEach( line => {
+            if(line == ''){
+                return;
+            }
+            if(line == '.data') {
+                data_flag = true;
+                return;
+            }
+            if(line == '.text') {
+                environment.registers[ '$pc' ] = address;
+                data_flag = false;
+                return;
+            }
+            if(data_flag) {
+                environment.memory[ address ] = parseInt(line);
+            }
+            else {
+                environment.memory[ address ] = line;
+            }
+            address += 4;
+            
+        }
+    );
+    environment.registers[ '$sp' ] = address;
 }
