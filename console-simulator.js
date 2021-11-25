@@ -15,7 +15,7 @@ rl.on( "close", function () {
 
 // Exit commands
 exit_commands = new Set();
-['exit','quit','q','close'].forEach( e => exit_commands.add( e ) );
+['exit','quit','q','close','halt','h'].forEach( e => exit_commands.add( e ) );
 
 // Console commands
 // This object maps the textual command to the fn obj that handles it
