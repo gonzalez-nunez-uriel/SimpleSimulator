@@ -1,10 +1,12 @@
 module.exports = {
     test_msg: "Import successful",
-    supported_cpus: ['mips'],
+    supported_cpus: null,
     //~ Is it efficient to search a list?
     supported_instructions: null,
     factory: factory,
     execute: execute,
+    step:step,
+    load_source_into_memory: load_source_into_memory,
     // To make functions visible for simple repl manipulation. To make it easy to find and debug.
     // dg stand for debug. Short, so there is no need to type too much.
     dg: {
@@ -19,6 +21,10 @@ module.exports = {
 
     }
 }
+
+supported_cpus = new Set();
+['mips'].forEach( e => supported_cpus.add( e ) );
+module.exports.supported_cpus = supported_cpus;
 
 function factory( cpu ) {
     if ( cpu == 'mips' ) {
@@ -35,6 +41,14 @@ function factory( cpu ) {
 function execute( environment, text_input ) {
     let command = environment.parser( text_input );
     handle_command( environment, command );
+}
+
+// executes the next instruction pointed by the program counter
+// this fn is to be used only if instructions have been loaded into memory
+function step( environment ){
+    let instruction = environment.memory[ environment.registers[ '$pc' ] ];
+    execute( environment, instruction );
+    environment.registers[ '$pc' ] = environment.registers[ '$pc' ] + 4;
 }
 
 //~ optimize latter
@@ -64,10 +78,22 @@ function preprocess_args( args, expected_num_of_args ) {
 function parse_mips( text_input ) {
     text_input = remove_front_whitespaces( text_input );
     let index = text_input.indexOf( ' ' );
-    let command =  {
-        opt: text_input.slice( 0, index ), 
-        args: text_input.slice( index + 1 )
+    let command = null;
+    // guard. In case the instruction takes no arguments.
+    // in this case the instruction should not attempt to access the args var
+    if( index == -1 ) {
+        command = {
+            opt: text_input,
+            args: null
+        }
     }
+    else {
+        command =  {
+            opt: text_input.slice( 0, index ), 
+            args: text_input.slice( index + 1 )
+        }
+    }
+    
     return command;
 }
 
@@ -90,6 +116,7 @@ function build_mips_registers() {
     registers['$sp'] = 0;
     registers['$fp'] = 0;
     registers['$ra'] = 0;
+    registers['$pc'] = 0;
 
 
     // regular registers
@@ -116,8 +143,12 @@ function build_mips_instructions() {
 
     //~ still has the issue that each new instruction needs to be manually added here.
     let mips_instructions = new Set();
-    ['add','addi','sub','lw','sw'].forEach( e => mips_instructions.add(e) );
+    ['halt','add','addi','sub','lw','sw'].forEach( e => mips_instructions.add(e) );
     module.exports.supported_instructions = mips_instructions;
+
+    instructions['halt'] = function ( environment, args ){
+        console.log('HALT'); //~ This is temporary. There needs to be a way for the sim to signal the end of the simulation
+    }
 
     instructions['add'] = function ( environment, args ) {
         args = preprocess_args( args, 3 );
@@ -164,15 +195,48 @@ function build_mips_instructions() {
     return instructions;
 }
 
+//~ Might not be the best location. Just temporary.
+const MEM_SIZE = 2**10;
 function build_memory() {
     let memory = {};
-    //~ Might not be the best location. Just temporary.
-    let size = 2**10;
-
+    
     // size must be incremented by 4 to simualte memory alignment
-    for( let x = 0; x < size; x += 4 ) {
+    for( let x = 0; x < MEM_SIZE; x += 4 ) {
         memory[x] = 0;
     }
 
     return memory;
+}
+
+// provided the contents of a file as a string, it puts all that string into memory
+//~Simple version that does not understand .data, .word, .text, or any other sp labels and empty lines
+function load_source_into_memory( environment, text_input ) {
+    text_input = text_input.split( '\n' );
+    
+    let address = 0;
+    let data_flag = false; //if in .text area then false; if in .data area then true
+    text_input.forEach( line => {
+            if(line == ''){
+                return;
+            }
+            if(line == '.data') {
+                data_flag = true;
+                return;
+            }
+            if(line == '.text') {
+                environment.registers[ '$pc' ] = address;
+                data_flag = false;
+                return;
+            }
+            if(data_flag) {
+                environment.memory[ address ] = parseInt(line);
+            }
+            else {
+                environment.memory[ address ] = line;
+            }
+            address += 4;
+            
+        }
+    );
+    environment.registers[ '$sp' ] = address;
 }

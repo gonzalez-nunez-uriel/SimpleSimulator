@@ -180,3 +180,51 @@ describe("Single Line MIPS Parser", function() {
         });
     });
 });
+
+describe("Instructions Stored in Memory and Executed One by One", function() {
+    it( "Simple load, add, and store", function() {
+        let environment = simulator.factory( 'mips' );
+        environment.memory[0] = 10;
+        environment.memory[4] = 12;
+        environment.memory[8] = 'lw $t0,0($zero)'; // $t0 <- 10
+        environment.memory[12] = 'lw $t1,4($zero)'; // $t1 <- 12
+        environment.memory[16] = 'add $t2,$t1,$t0'; // $t2 <- 22
+        environment.memory[20] = 'addi $t3,$zero,32'; // $t3 <- 32 // this is essentially setting the stack pointer
+        environment.memory[24] = 'sw $t2,0($t3)'; // MEM[32] <- 22
+        environment.memory[28] = 'halt';
+        environment.registers[ '$pc' ] = 8;
+        simulator.step( environment ); // inst @ 8 executed
+        simulator.step( environment ); // inst @ 12 executed
+        simulator.step( environment ); // inst @ 16 executed
+        simulator.step( environment ); // inst @ 20 executed
+        simulator.step( environment ); // inst @ 24 executed
+        simulator.step( environment ); // inst @ 28 executed
+        expect( environment.memory[ 32 ] ).to.equal( 22 );
+    });
+    it( "Simple load, add, subtract, and store", function() {
+        let environment = simulator.factory( 'mips' );
+        environment.memory[0]  = 1;
+        environment.memory[4]  = 2;
+        environment.memory[8]  = 3;
+        environment.memory[12] = 5;
+        environment.memory[16] = 'lw $t0, 0($zero)'; // $t0 <- 1
+        environment.memory[20] = 'lw $t1, 4($zero)'; // $t1 <- 2
+        environment.memory[24] = 'sub $t2, $t1, $t0'; // $t2 <- 2 - 1
+        environment.memory[28] = 'sw $t2, 0($sp)'; // MEM[sp] <- 1
+        environment.memory[32] = 'lw $t0, 12($zero)'; // $t0 <- 5
+        environment.memory[36] = 'lw $t1, 0($sp)'; // $t1 <- 1
+        environment.memory[40] = 'add $t2, $t0, $t1'; // $t2 <- 6
+        environment.memory[44] = 'halt';
+        environment.registers[ '$pc' ] = 16;
+        environment.registers[ '$sp' ] = 48;
+        simulator.step( environment ); // inst @ 16 executed
+        simulator.step( environment ); // inst @ 20 executed
+        simulator.step( environment ); // inst @ 24 executed
+        simulator.step( environment ); // inst @ 28 executed
+        simulator.step( environment ); // inst @ 32 executed
+        simulator.step( environment ); // inst @ 36 executed
+        simulator.step( environment ); // inst @ 40 executed
+        simulator.step( environment ); // inst @ 44 executed
+        expect( environment.registers[ '$t2' ] ).to.equal( 6 );
+    });
+});
